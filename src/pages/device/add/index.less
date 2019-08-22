@@ -1,0 +1,66 @@
+page {
+  height    : 100%;
+  background: #f3f3f3;
+}
+
+.device-content {
+  display       : flex;
+  flex-direction: column;
+
+  >image {
+    width : 100%;
+    height: 440rpx;
+  }
+
+  .desc-wrap {
+    flex           : 1;
+    padding        : 94rpx 60rpx 50rpx 60rpx;
+    text-align     : center;
+    display        : flex;
+    justify-content: space-between;
+    flex-direction : column;
+
+    .info {
+      font-size: 28rpx;
+      color    : #414141;
+    }
+  }
+}
+
+.help {
+  margin-top: 40rpx;
+  font-size : 28rpx;
+  color     : #0057B8;
+}
+
+.next-btn {
+  background   : #0057B8;
+  border-radius: 45rpx;
+  color        : #fff;
+  margin-top   : 20rpx;
+}
+
+.radio-list__radio {
+  font-size: 28rpx;
+  color    : #A2A2A2;
+
+  :after {
+    display: none;
+  }
+}
+
+.help-content {
+  background: #fff;
+  padding   : 20rpx 40rpx;
+
+  .help-title {
+    font-size: 32rpx;
+    color    : #040404;
+  }
+
+  .help-desc {
+    font-size : 24rpx;
+    color     : #000000;
+    margin-top: 20rpx;
+  }
+}
