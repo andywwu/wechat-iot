@@ -1,0 +1,111 @@
+page {
+  background: #f3f3f3;
+}
+
+.connect-content {
+  padding        : 100rpx 60rpx 50rpx 60rpx;
+  display        : flex;
+  flex-direction : column;
+  justify-content: space-between;
+  align-items    : center;
+  box-sizing     : border-box;
+
+  >view {
+    width: 100%;
+  }
+
+  .top {
+    text-align: center;
+
+    >image {
+      height: 180rpx;
+      width : 180rpx;
+    }
+
+    .tips {
+      margin-top    : 62rpx;
+      font-family   : Roboto-Medium;
+      font-size     : 28rpx;
+      color         : #040404;
+      letter-spacing: 0;
+      text-align    : center;
+    }
+
+    .form-wrap {
+      margin-top: 64rpx;
+
+      .at-input {
+        text-align   : left;
+        padding      : 24rpx 21rpx;
+        margin-bottom: 20rpx;
+        margin-left  : 0px;
+      }
+    }
+
+    .desc {
+      margin-top    : 20rpx;
+      font-family   : PingFangSC-Regular;
+      font-size     : 20rpx;
+      color         : #A2A2A2;
+      letter-spacing: 0;
+      text-align    : center;
+    }
+  }
+}
+
+.next-btn {
+  background   : #0057B8;
+  border-radius: 45rpx;
+  color        : #fff;
+  width        : 100%;
+  margin-top   : 20rpx;
+}
+
+.inputWrap {
+  position: relative;
+
+  .at-icon {
+    position: absolute;
+    right   : 21rpx;
+    top     : 32rpx;
+  }
+}
+
+.process-content {
+  display        : flex;
+  flex-direction : column;
+  justify-content: space-between;
+  align-items    : center;
+  box-sizing     : border-box;
+  padding        : 210rpx 60rpx 60rpx 50rpx;
+
+  .top {
+    text-align: center;
+  }
+
+  >view {
+    width: 100%;
+  }
+}
+
+.num-wrap {
+  >text {
+    font-family: Roboto-Regular;
+    color      : #0057B8;
+    font-size  : 60rpx;
+
+    &:first-child {
+      font-size     : 180rpx;
+      letter-spacing: 0.22rpx;
+      text-align    : center;
+      line-height   : 186rpx;
+    }
+  }
+}
+
+.desc {
+  margin-top : 64rpx;
+  font-family: PingFangSC-Regular;
+  font-size  : 28rpx;
+  color      : #040404;
+}

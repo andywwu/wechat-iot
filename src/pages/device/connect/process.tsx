@@ -1,12 +1,13 @@
 import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
+import { View, Text } from '@tarojs/components'
+import { AtButton } from 'taro-ui'
 import { connect } from '@tarojs/redux'
 import { Dispatch, AnyAction } from 'redux'
-import { AtButton } from 'taro-ui'
-import { View, Text, Image, Button, Radio, RadioGroup } from '@tarojs/components'
 
-import BGPIC from '../../../assets/add-device.jpg'
 import "taro-ui/dist/style/components/button.scss"
+import "taro-ui/dist/style/components/form.scss"
+import "taro-ui/dist/style/components/input.scss"
 import "taro-ui/dist/style/components/icon.scss"
 import './index.less'
 
@@ -20,15 +21,15 @@ type PageState = {
     animated?: boolean,
     back?: boolean,
   },
-  checked: boolean,
-  navHeight: number,
+  ifShow?: boolean,
+  wifi?: string,
+  password?: string
+
 }
 
 type PageStateProps = {
   dispatch: Dispatch<AnyAction>,
-  global: {
-    userInfo: any,
-  }
+  process: object
 }
 type PageDispatchProps = {
 }
@@ -38,15 +39,14 @@ type PageOwnProps = {
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
-interface AddDevicePage {
+interface ProcessPage {
   props: IProps;
 }
 
-
-@connect(({ global }) => ({
-  global
+@connect(({ process }) => ({
+  process
 }))
-class AddDevicePage extends Component {
+class ProcessPage extends Component {
   /**
  * 指定config的类型声明为: Taro.Config
  *
@@ -62,7 +62,7 @@ class AddDevicePage extends Component {
   state = {
     navbarData: {
       loading: false,
-      title: '添加设备',
+      title: '初始化',
       color: '#000',
       background: '#fff',
       show: true,
@@ -70,7 +70,9 @@ class AddDevicePage extends Component {
       animated: false
     },
     navHeight: 0,
-    checked: false,
+    ifShow: false,
+    password: '',
+    wifi: '',
   }
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
@@ -85,16 +87,78 @@ class AddDevicePage extends Component {
         })
       }
     })
+    Taro.startWifi().then((res: any) => {
+      if (res.errMsg === "startWifi:ok") {
+        Taro.getConnectedWifi().then((res: any) => {
+          if (res.errMsg === "getConnectedWifi:ok") {
+            this.setState({
+              wifi: res.wifi.SSID
+            })
+          }
+        }).catch(err => {
+          Taro.showToast({
+            icon: 'none',
+            title: err.errMsg,
+            duration: 2000
+          })
+        })
+      }
+    }).catch(err => {
+      Taro.showToast({
+        icon: 'none',
+        title: err.errMsg,
+        duration: 2000
+      })
+    })
+
+    // const navHeight = Taro.getMenuButtonBoundingClientRect().bottom;
+  }
+
+  startWifi = () => {
+    Taro.getSetting().then(res => {
+      if (!res.authSetting['scope.userLocation']) {
+        Taro.authorize({ scope: 'scope.userLocation' }).then(res => {
+          console.log(res)
+        }).catch(error => {
+          this.setState({
+            modalVisible: true,
+          })
+        })
+      } else {
+        this.getWifiList()
+      }
+    })
+  }
+  getWifiList() {
+    Taro.startWifi().then((res: any) => {
+      if (res.errMsg === "startWifi:ok") {
+        Taro.getWifiList().then((res: any) => {
+          console.log(res)
+          Taro.onGetWifiList((res: any) => {
+            const { wifiList } = res;
+            console.log(wifiList)
+          })
+        })
+      }
+    })
   }
   onRadioChange = (e) => {
     this.setState({
       checked: e.detail.value === 'device'
     })
   }
+  onSubmit = (e) => {
+    console.log(e)
+  }
+  handleChange(value) {
+    this.setState({
+      password: value,
+    })
+  }
   componentWillUnmount() { }
   render() {
-    const { userInfo } = this.props.global
     const { loading, title, color, background, show, animated, back } = this.state.navbarData
+    const { wifi, password } = this.state
     return (
       <View className='device-wrap'>
         <nav-bar
@@ -107,46 +171,26 @@ class AddDevicePage extends Component {
           animated={animated}
         >
         </nav-bar>
-        <View className="device-content" style={{ height: `${this.state.navHeight}px` }}>
-          <Image src={BGPIC} />
-          <View className="desc-wrap">
-            <View className="info">
-              <Text>
-                确保设备通电后长按电源键5秒，当WiFi提示灯快速闪动点击下一步。
-              </Text>
-              <View className="help" onClick={() => {
-                Taro.navigateTo({
-                  url: '/pages/device/add/help',
-                })
-              }}>
-                <Text
-                  className="at-icon at-icon-help"
-                  style={{ marginRight: '16rpx' }}
-                />
-                帮助
-              </View>
+        <View className="process-content" style={{ height: `${this.state.navHeight}px` }}>
+          <View className="top">
+            <View className="num-wrap">
+              <Text>15</Text>
+              <Text>%</Text>
             </View>
-            <View className="btn-wrap">
-              <RadioGroup onChange={(e) => this.onRadioChange(e)}>
-                <Radio
-                  className='radio-list__radio'
-                  color="#0057B8"
-                  checked={this.state.checked}
-                  value="device"
-                >
-                  设备已通电
-                </Radio>
-              </RadioGroup>
-              <AtButton
-                className="next-btn"
-                disabled={!this.state.checked}
-                onClick={() => Taro.navigateTo({
-                  url: '/pages/device/connect/index',
-                })}
-              >
-                下一步
-              </AtButton>
+
+            <View className="desc">
+              请尽量把手机、设备和路由器靠近
             </View>
+          </View>
+          <View>
+            <AtButton
+              className="next-btn"
+              onClick={() => Taro.navigateTo({
+                url: '/pages/device/connect/index',
+              })}
+            >
+              取消
+             </AtButton>
           </View>
         </View>
       </View>
@@ -161,4 +205,4 @@ class AddDevicePage extends Component {
 //
 // #endregion
 
-export default AddDevicePage as ComponentClass<PageOwnProps, PageState>
+export default ProcessPage as ComponentClass<PageOwnProps, PageState>
